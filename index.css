@@ -9,12 +9,16 @@
 }
 */
 :root {
-  --bg-color: #7a89dd;
+  --bg-color: rgb(179, 179, 179);
   --p1-color: #e60889;
   --p2-color: #5300d9;
   --primary-color: #392d7c;
   --text-color: #1a1a1a;
   --secondary-color: #7557bd;
+}
+
+input:-webkit-autofill {
+  -webkit-background-clip: text;
 }
 
 * {

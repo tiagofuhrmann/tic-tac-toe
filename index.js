@@ -1,15 +1,7 @@
-// *     ->        Realçar um quadrado ao passar o mouse em cima
-// !     ->        Sistema de pontuação para cada jogador (melhor de 5)
-// !     ->        Botão para resetar o round atual
-// !     ->        Salvar o status atual no LocalStorage
-// !     ->        Botão para continuar para o próximo round ao vencer ou empatar
-// TODO  ->        Botão para resetar o jogo inteiro
-// TODO  ->        Funcionamento do botão de alterar tema
-// TODO  ->        Escurecer o resto dos campos quando tiver uma vitória
+import { createHr, createInput, createLabel } from "./accessory.js";
+/*import "../styles/index.css";
+ */
 
-// Declaring main variables
-// Declaring main variables
-// Declaring main variables
 const victoryConditions = [
   {
     victoryDirection: "victoryHorizontal",
@@ -33,26 +25,25 @@ const victoryConditions = [
 
 let currentPlayer = "";
 let winDirection;
+let playCount = 0;
 let players = [
   { playerNumber: "1", symbol: "", name: "", wins: 0 },
   { playerNumber: "2", symbol: "", name: "", wins: 0 },
 ];
-let playCount = 0;
 let gameStatus = [
   ["", "", ""],
   ["", "", ""],
   ["", "", ""],
 ];
 
-//Checking if saved game exists
-//Checking if saved game exists
-//Checking if saved game exists
-retrieveGameData();
+const saveGame = () => {
+  localStorage.setItem("players", JSON.stringify(players));
+  localStorage.setItem("currentPlayer", currentPlayer);
+  localStorage.setItem("playCount", playCount);
+  localStorage.setItem("gameStatus", JSON.stringify(gameStatus));
+};
 
-//Main Functions
-//Main Functions
-//Main Functions
-function retrieveGameData() {
+const restoreGame = () => {
   let retrievedPlayers = localStorage.getItem("players");
   let retrievedPlayCount = localStorage.getItem("playCount");
   let retrievedCurrentPlayer = localStorage.getItem("currentPlayer");
@@ -96,148 +87,16 @@ function retrieveGameData() {
   } else {
     console.log("Game data doesn't exist or is corrupted");
   }
-}
+};
 
-function checkVitory() {
-  if (playCount < 9) {
-    victoryConditions.forEach(function (direction) {
-      direction.conditions.forEach(function (condition) {
-        let square1SelectedBy = document.querySelector("#gameSquare-" + condition[0]).dataset.selectedByPlayer;
-        let square2SelectedBy = document.querySelector("#gameSquare-" + condition[1]).dataset.selectedByPlayer;
-        let square3SelectedBy = document.querySelector("#gameSquare-" + condition[2]).dataset.selectedByPlayer;
+function restartGameStatus() {
+  gameStatus = [
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""],
+  ];
 
-        if (
-          square1SelectedBy === square2SelectedBy &&
-          square2SelectedBy === square3SelectedBy &&
-          square1SelectedBy &&
-          square2SelectedBy &&
-          square3SelectedBy
-        ) {
-          winDirection = direction.victoryDirection;
-          let playerWinner = square1SelectedBy;
-          let winnerTurnInfo = document.querySelector(".player" + playerWinner + "Turn");
-          winnerTurnInfo.innerText = "Vencedor!";
-          winnerTurnInfo.classList.remove("hidden");
-
-          const hr1 = createHr(winDirection);
-          const hr2 = createHr(winDirection);
-          const hr3 = createHr(winDirection);
-
-          document.querySelector("#gameSquare-" + condition[0]).appendChild(hr1);
-          document.querySelector("#gameSquare-" + condition[1]).appendChild(hr2);
-          document.querySelector("#gameSquare-" + condition[2]).appendChild(hr3);
-
-          if (playerWinner == 1) {
-            document.querySelector(".player2Turn").classList.add("hidden");
-            hr1.classList.add("player1WinLine");
-            hr2.classList.add("player1WinLine");
-            hr3.classList.add("player1WinLine");
-            players[0].wins++;
-          } else if (playerWinner == 2) {
-            document.querySelector(".player1Turn").classList.add("hidden");
-            hr1.classList.add("player2WinLine");
-            hr2.classList.add("player2WinLine");
-            hr3.classList.add("player2WinLine");
-            players[1].wins++;
-          }
-
-          for (i = 1; i <= players[playerWinner - 1].wins; i++) {
-            let dot = document.getElementById(`player${playerWinner}-dot${i}`);
-            dot.classList.add(`filledDotp${playerWinner}`);
-          }
-
-          document.querySelectorAll(".gameSquare").forEach(function (gameSquare) {
-            gameSquare.removeEventListener("click", gameInnerWorkings);
-          });
-
-          const continueGameBtn = document.querySelector(".continueGameBtn");
-          continueGameBtn.addEventListener("click", restartRound);
-          continueGameBtn.style.height = "40px";
-          continueGameBtn.style.border = "2px solid black";
-
-          document.querySelector(".gameEnded").classList.remove("displayNone");
-          document.querySelector(".gameEnded").innerText = "Vitória";
-
-          gameStatus = [
-            ["", "", ""],
-            ["", "", ""],
-            ["", "", ""],
-          ];
-
-          playCount = 0;
-
-          localStorage.setItem("gameStatus", JSON.stringify(gameStatus));
-          localStorage.setItem("currentPlayer", currentPlayer);
-          localStorage.setItem("playCount", playCount);
-          localStorage.setItem("players", JSON.stringify(players));
-        }
-      });
-    });
-  } else {
-    document.querySelector(".gameEnded").classList.remove("displayNone");
-    document.querySelector(".gameEnded").innerText = "Deu velha!";
-    document.querySelector(".player2Turn").classList.add("hidden");
-    document.querySelector(".player1Turn").classList.add("hidden");
-    const continueGameBtn = document.querySelector(".continueGameBtn");
-    continueGameBtn.addEventListener("click", restartRound);
-    continueGameBtn.style.height = "40px";
-    continueGameBtn.style.border = "2px solid black";
-
-    gameStatus = [
-      ["", "", ""],
-      ["", "", ""],
-      ["", "", ""],
-    ];
-
-    playCount = 0;
-
-    localStorage.setItem("gameStatus", JSON.stringify(gameStatus));
-    localStorage.setItem("currentPlayer", currentPlayer);
-    localStorage.setItem("playCount", playCount);
-    localStorage.setItem("players", JSON.stringify(players));
-  }
-}
-
-function gameInnerWorkings(ev) {
-  if (ev.currentTarget.dataset.selectedByPlayer == "") {
-    let player1 = players[0];
-    let player2 = players[1];
-
-    const squareLocation = ev.currentTarget.dataset.region.split("-");
-    const squareRow = squareLocation[0];
-    const squareColumn = squareLocation[1];
-    gameStatus[squareRow][squareColumn] = currentPlayer;
-
-    if (currentPlayer == "1") {
-      ev.currentTarget.innerText = player1.symbol;
-      ev.currentTarget.dataset.selectedByPlayer = "1";
-      ev.currentTarget.classList.add("player1Color");
-      document.querySelector(".player2Turn").classList.remove("hidden");
-      document.querySelector(".player1Turn").classList.add("hidden");
-      playCount++;
-      checkVitory();
-    } else if (currentPlayer == "2") {
-      ev.currentTarget.innerText = player2.symbol;
-      ev.currentTarget.dataset.selectedByPlayer = "2";
-      ev.currentTarget.classList.add("player2Color");
-      document.querySelector(".player1Turn").classList.remove("hidden");
-      document.querySelector(".player2Turn").classList.add("hidden");
-      playCount++;
-      checkVitory();
-    }
-
-    if (currentPlayer == "1") {
-      currentPlayer = "2";
-    } else if (currentPlayer == "2") {
-      currentPlayer = "1";
-    }
-
-    console.table(gameStatus);
-
-    localStorage.setItem("playCount", playCount);
-    localStorage.setItem("currentPlayer", currentPlayer);
-    localStorage.setItem("gameStatus", JSON.stringify(gameStatus));
-  }
+  playCount = 0;
 }
 
 function newGameHandler(ev) {
@@ -297,9 +156,7 @@ function newGameHandler(ev) {
       document.querySelector(".player1Name").innerText = players[0].name;
       document.querySelector(".player2Name").innerText = players[1].name;
       document.querySelector(".player1Turn").classList.remove("hidden");
-      localStorage.setItem("players", JSON.stringify(players));
-      localStorage.setItem("currentPlayer", currentPlayer);
-      localStorage.setItem("playCount", playCount);
+      saveGame();
       nameInputsContainer.style.height = "0px";
       nameInputsContainer.style.border = "0px";
       document.querySelector(".playerData").classList.remove("displayNone");
@@ -322,7 +179,6 @@ function restartRound(ev) {
   continueGameBtn.style.height = "0px";
   continueGameBtn.style.border = "0px";
 
-  playCount = 0;
   document.querySelector(".player1Turn").innerText = "Sua vez!";
   document.querySelector(".player2Turn").innerText = "Sua vez!";
   document.querySelector(".player1Turn").classList.add("hidden");
@@ -338,45 +194,144 @@ function restartRound(ev) {
   document.querySelector(".player2Info").classList.remove("displayNone");
   document.querySelector(".gameEnded").classList.add("displayNone");
 
-  gameStatus = [
-    ["", "", ""],
-    ["", "", ""],
-    ["", "", ""],
-  ];
-
-  localStorage.setItem("gameStatus", JSON.stringify(gameStatus));
-  localStorage.setItem("currentPlayer", currentPlayer);
-  localStorage.setItem("playCount", playCount);
-  localStorage.setItem("players", JSON.stringify(players));
+  restartGameStatus();
+  saveGame();
 }
 
-// Accessory Functions
-// Accessory Functions
-// Accessory Functions
-function createInput(id, name, className, type, value = "") {
-  const input = document.createElement("input");
-  input.id = id;
-  input.name = name;
-  input.className = className;
-  input.type = type;
-  input.value = value;
-  return input;
-}
-function createLabel(htmlFor, innerText) {
-  const label = document.createElement("label");
-  label.htmlFor = htmlFor;
-  label.innerText = innerText;
-  return label;
-}
-function createHr(className) {
-  let hr = document.createElement("hr");
-  hr.className = className;
-  return hr;
+function checkVitory() {
+  victoryConditions.forEach(function (direction) {
+    direction.conditions.forEach(function (condition) {
+      let square1SelectedBy = document.querySelector("#gameSquare-" + condition[0]).dataset.selectedByPlayer;
+      let square2SelectedBy = document.querySelector("#gameSquare-" + condition[1]).dataset.selectedByPlayer;
+      let square3SelectedBy = document.querySelector("#gameSquare-" + condition[2]).dataset.selectedByPlayer;
+
+      if (
+        square1SelectedBy === square2SelectedBy &&
+        square2SelectedBy === square3SelectedBy &&
+        square1SelectedBy &&
+        square2SelectedBy &&
+        square3SelectedBy
+      ) {
+        winDirection = direction.victoryDirection;
+        let playerWinner = square1SelectedBy;
+        let winnerTurnInfo = document.querySelector(".player" + playerWinner + "Turn");
+        winnerTurnInfo.innerText = "Vencedor!";
+        winnerTurnInfo.classList.remove("hidden");
+
+        const hr1 = createHr(winDirection);
+        const hr2 = createHr(winDirection);
+        const hr3 = createHr(winDirection);
+
+        document.querySelector(`#gameSquare-${condition[0]}`).appendChild(hr1);
+        document.querySelector(`#gameSquare-${condition[1]}`).appendChild(hr2);
+        document.querySelector(`#gameSquare-${condition[2]}`).appendChild(hr3);
+
+        if (playerWinner == 1) {
+          document.querySelector(".player2Turn").classList.add("hidden");
+          hr1.classList.add("player1WinLine");
+          hr2.classList.add("player1WinLine");
+          hr3.classList.add("player1WinLine");
+          players[0].wins++;
+        } else if (playerWinner == 2) {
+          document.querySelector(".player1Turn").classList.add("hidden");
+          hr1.classList.add("player2WinLine");
+          hr2.classList.add("player2WinLine");
+          hr3.classList.add("player2WinLine");
+          players[1].wins++;
+        }
+
+        for (let i = 1; i <= players[playerWinner - 1].wins; i++) {
+          let dot = document.getElementById(`player${playerWinner}-dot${i}`);
+          dot.classList.add(`filledDotp${playerWinner}`);
+        }
+
+        let matchEnded = false;
+        players.forEach((player) => {
+          if (player.wins == 5) {
+            matchEnded = true;
+            return;
+          }
+          return;
+        });
+
+        if (matchEnded) {
+          localStorage.clear();
+          alert("O jogo acabou");
+          location.reload();
+          return;
+        }
+
+        document.querySelectorAll(".gameSquare").forEach(function (gameSquare) {
+          gameSquare.removeEventListener("click", gameInnerWorkings);
+        });
+
+        const continueGameBtn = document.querySelector(".continueGameBtn");
+        continueGameBtn.addEventListener("click", restartRound);
+        continueGameBtn.style.height = "40px";
+        continueGameBtn.style.border = "2px solid black";
+
+        document.querySelector(".gameEnded").classList.remove("displayNone");
+        document.querySelector(".gameEnded").innerText = "Vitória";
+
+        restartGameStatus();
+        saveGame();
+      }
+    });
+  });
+  if (playCount == 9) {
+    document.querySelector(".gameEnded").classList.remove("displayNone");
+    document.querySelector(".gameEnded").innerText = "Deu velha!";
+    document.querySelector(".player2Turn").classList.add("hidden");
+    document.querySelector(".player1Turn").classList.add("hidden");
+    const continueGameBtn = document.querySelector(".continueGameBtn");
+    continueGameBtn.addEventListener("click", restartRound);
+    continueGameBtn.style.height = "40px";
+    continueGameBtn.style.border = "2px solid black";
+
+    restartGameStatus();
+    saveGame();
+  }
 }
 
-//Adding event listeners
-//Adding event listeners
-//Adding event listeners
+function gameInnerWorkings(ev) {
+  if (ev.currentTarget.dataset.selectedByPlayer == "") {
+    let player1 = players[0];
+    let player2 = players[1];
+
+    const squareLocation = ev.currentTarget.dataset.region.split("-");
+    const squareRow = squareLocation[0];
+    const squareColumn = squareLocation[1];
+    gameStatus[squareRow][squareColumn] = currentPlayer;
+
+    if (currentPlayer == "1") {
+      ev.currentTarget.innerText = player1.symbol;
+      ev.currentTarget.dataset.selectedByPlayer = "1";
+      ev.currentTarget.classList.add("player1Color");
+      document.querySelector(".player2Turn").classList.remove("hidden");
+      document.querySelector(".player1Turn").classList.add("hidden");
+      playCount++;
+      checkVitory();
+    } else if (currentPlayer == "2") {
+      ev.currentTarget.innerText = player2.symbol;
+      ev.currentTarget.dataset.selectedByPlayer = "2";
+      ev.currentTarget.classList.add("player2Color");
+      document.querySelector(".player1Turn").classList.remove("hidden");
+      document.querySelector(".player2Turn").classList.add("hidden");
+      playCount++;
+      checkVitory();
+    }
+
+    if (currentPlayer == "1") {
+      currentPlayer = "2";
+    } else if (currentPlayer == "2") {
+      currentPlayer = "1";
+    }
+
+    console.table(gameStatus);
+    saveGame();
+  }
+}
+
 document.getElementById("startGameBtn").addEventListener("click", newGameHandler);
 document.querySelector(".restartRoundBtn").addEventListener("click", restartRound);
 document.getElementById("resetLocal").addEventListener("click", (ev) => {
@@ -387,3 +342,5 @@ document.getElementById("resetLocal").addEventListener("click", (ev) => {
 document.querySelectorAll(".gameSquare").forEach(function (gameSquare) {
   gameSquare.addEventListener("click", gameInnerWorkings);
 });
+
+restoreGame();
