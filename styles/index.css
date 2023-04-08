@@ -1,0 +1,332 @@
+/*:root {
+    --x-color: #ff4136;
+    --o-color: #0074d9;
+    --empty-color: #ffffff;
+    --bg-color: #f5f5f5;
+    --textcolorlight: #555555;
+    --textcolordarker: #333333;
+    --button-color: #4caf50;
+}
+
+*/
+:root {
+    --p1-color: #e60889;
+    --p2-color: #5814c5;
+    --text-color: #1a1a1a;
+    --secondary-color: #7465c7;
+    --gameboard-color: #423a6e;
+}
+
+input:-webkit-autofill {
+    -webkit-background-clip: text;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Shantell Sans", cursive;
+}
+
+body {
+    min-height: 100vh;
+    background-image: linear-gradient(
+        to right bottom,
+        #b38ebe,
+        #b581cd,
+        #9e81cd,
+        #a880cd,
+        #ae80cd,
+        #a881ce,
+        #a283cf,
+        #9b84d0,
+        #9187d1,
+        #8889d2,
+        #7f8cd2,
+        #768ed1
+    );
+}
+
+header {
+    text-align: center;
+    padding: 30px 0px 30px 0px;
+}
+header h1 {
+    text-align: center;
+    color: var(--text-color);
+    transition: opacity 0.8s;
+}
+
+main {
+    padding: 0px 60px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.startGameBtn {
+    width: 300px;
+    height: 50px;
+    border-radius: 10px;
+    font-size: 2 0px;
+    font-weight: bold;
+    border: 3px solid black;
+    color: var(--text-color);
+    background-color: var(--secondary-color);
+    margin: 30px 0px;
+}
+
+.startGameBtn:hover {
+    transition-duration: 0.2s;
+    filter: brightness(0.85);
+    box-shadow: 2px 5px 8px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+
+#gameContainer {
+    display: flex;
+    margin: 30px;
+}
+
+.gameContainerAligner {
+    width: 150px;
+}
+
+.gameStatusButtons {
+    padding: 30px;
+}
+
+.gameStatusButton {
+    margin-bottom: 10px;
+    border-radius: 10px;
+    padding: 2px;
+    background-color: var(--secondary-color);
+}
+
+.gameBoard {
+    padding: 30px;
+    border-radius: 30px;
+    height: 500px;
+    width: 500px;
+    display: grid;
+    gap: 30px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+    background-color: var(--gameboard-color);
+}
+
+.gameSquare {
+    border-radius: 15px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    transition: 0.2s;
+    background-color: white;
+}
+
+.gameSquare:hover {
+    transform: scale(1.1);
+}
+
+.playerData {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    border-radius: 20px;
+    border: 4px solid black;
+    padding: 10px;
+}
+
+.gameResult {
+    height: 45px;
+}
+.gameInfo {
+    height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.displayNone {
+    display: none;
+}
+
+.flex {
+    display: flex;
+}
+
+.gameStartContainer {
+    transition: height 0.5s;
+    height: 0px;
+    border: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 500px;
+    overflow: hidden;
+    border-radius: 20px;
+    flex-direction: column;
+    color: var(--text-color);
+}
+
+.gameStartContainer h1 {
+    text-align: center;
+    font-size: 0px;
+}
+
+body > div > main > section > ul > li:nth-child(1) > label:nth-child(1),
+body > div > main > section > ul > li:nth-child(2) > label:nth-child(1) {
+    width: 95px;
+    display: inline-block;
+}
+
+.gameStartContainer ul li input[type="radio"] {
+    outline: none;
+}
+
+body > div > main > section > ul > li:nth-child(1) > label:nth-child(3),
+body > div > main > section > ul > li:nth-child(1) > label:nth-child(5),
+body > div > main > section > ul > li:nth-child(2) > label:nth-child(3),
+body > div > main > section > ul > li:nth-child(2) > label:nth-child(5) {
+    margin-right: 3px;
+    margin-left: 3px;
+}
+.gameStartContainer ul li input[type="text"] {
+    width: 52%;
+    margin-right: 5px;
+    border: 2px solid black;
+    background-color: transparent;
+    height: 30px;
+    border-radius: 5px;
+    padding: 10px;
+    color: var(--text-color);
+}
+
+.gameStartContainer ul {
+    padding: 20px 0px 20px 0px;
+}
+
+.gameStartContainer ul li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0px 10px 0px;
+}
+
+.gameStartContainer button {
+    width: 90%;
+    height: 50px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    border: 3px solid black;
+    color: var(--text-color);
+    background-color: var(--secondary-color);
+}
+
+.player1Color {
+    color: var(--p1-color);
+}
+
+.player2Color {
+    color: var(--p2-color);
+}
+
+.victoryHorizontal {
+    position: absolute;
+    width: 200px;
+    height: 5px;
+}
+
+.victoryVertical {
+    position: absolute;
+    width: 200px;
+    height: 5px;
+    transform: rotate(90deg);
+}
+
+.victoryDiagonal1 {
+    position: absolute;
+    width: 275px;
+    height: 5px;
+    transform: rotate(45deg);
+}
+
+.victoryDiagonal2 {
+    position: absolute;
+    width: 275px;
+    height: 5px;
+    transform: rotate(135deg);
+}
+
+.player2WinLine {
+    background-color: var(--p2-color);
+    border-color: var(--p2-color);
+}
+
+.player1WinLine {
+    background-color: var(--p1-color);
+    border-color: var(--p1-color);
+}
+
+.scoreboardDot {
+    background-color: transparent;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+}
+
+.player1Scoreboard .scoreboardDot {
+    border: 2px solid var(--p1-color);
+}
+
+.player2Scoreboard .scoreboardDot {
+    border: 2px solid var(--p2-color);
+}
+
+.player1Info,
+.player2Info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.scoreboard {
+    margin-top: 20px;
+    display: flex;
+    gap: 5px;
+}
+
+.filledDotp1 {
+    background-color: var(--p1-color);
+}
+
+.filledDotp2 {
+    background-color: var(--p2-color);
+}
+
+.continueGameBtn {
+    transition: height 0.5s 0ms;
+    width: 20%;
+    height: 0px;
+    border: 0px solid black;
+    border-radius: 15px;
+    overflow: hidden;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
